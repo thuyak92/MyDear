@@ -1,0 +1,76 @@
+//
+//  Config.xcconfig
+//  MyDear
+//
+//  Created by phuongthuy on 1/8/16.
+//  Copyright © 2016 PhuongThuy. All rights reserved.
+//
+
+==================
+install CocoaPods:
+-----------------
+
+$ [sudo] gem install cocoapods
+$ pod setup
+$ cd /path/to/MyProject
+$ touch Podfile
+$ edit Podfile
+//config your Podfile
+//************************************************
+
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '8.1'
+
+//************************************************
+
+//then run the following command 
+$ pod install
+
+
+==================
+Google Map API:
+--------------
+
++ Podfile:
+
+//************************************************
+
+pod 'GoogleMaps'
+
+//************************************************
+
+
+==================
+RestKit:
+-------
+Requirements:
+
++ Framwork:
+1. CFNetwork.framework
+2. CoreData.framework
+3. Security.framework
+4. MobileCoreServices.framework
+
++ Linker flags:
+1. -ObjC
+2. -all_load
+
++ ARC:
+- go to "Build Phases" tab
+- select all RestKit source file, press Enter
+- insert -fobjc-arc
+- and then "Done" to enable ARC for RestKit
+
++ Podfile:
+
+//************************************************
+
+platform :ios, '5.0'
+# Or platform :osx, '10.7'
+pod 'RestKit', '~> 0.24.0'
+
+# Testing and Search are optional components
+pod 'RestKit/Testing', '~> 0.24.0'
+pod 'RestKit/Search',  '~> 0.24.0'
+
+//************************************************
