@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnLogin;
 - (IBAction)onLoginButtonClicked:(id)sender;
 - (IBAction)onCancelButtonClicked:(id)sender;
+@property (weak, nonatomic) IBOutlet TWTRLogInButton *btnLoginTwt;
 - (IBAction)onLoginTwitterButtonClicked:(id)sender;
 @property (weak, nonatomic) IBOutlet FBSDKLoginButton *btnLoginFb;
 - (IBAction)onLoginFacebookButtonClicked:(id)sender;

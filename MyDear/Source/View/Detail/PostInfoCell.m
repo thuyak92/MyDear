@@ -1,17 +1,18 @@
 //
-//  DetailPostInfoCell.m
+//  PostInfoCell.m
 //  MyDear
 //
-//  Created by phuongthuy on 2/3/16.
+//  Created by phuongthuy on 2/7/16.
 //  Copyright © 2016 PhuongThuy. All rights reserved.
 //
 
-#import "DetailPostInfoCell.h"
+#import "PostInfoCell.h"
 
-@implementation DetailPostInfoCell
+@implementation PostInfoCell
 
 - (void)awakeFromNib {
     // Initialization code
+    _txtvStatus.scrollEnabled = NO;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -19,12 +20,5 @@
 
     // Configure the view for the selected state
 }
-
-+ (DetailPostInfoCell *)createView
-{
-    return [[[NSBundle mainBundle] loadNibNamed:@"DetailPostInfoCell" owner:self options:nil] objectAtIndex:0];
-}
-
-
 
 @end

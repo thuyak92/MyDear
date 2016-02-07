@@ -11,6 +11,7 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "DetailPostInfoCell.h"
 #import "DetailCommentCell.h"
+#import "PostInfoCell.h"
 
 
 @interface DetailVC ()
@@ -23,8 +24,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
-    self.tableView.estimatedRowHeight = self.tableView.rowHeight;
+//    self.tableView.estimatedRowHeight = self.tableView.rowHeight;
+//    self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
+    self.tableView.estimatedRowHeight = 50;
+    cellHeight = 44;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -62,35 +69,49 @@
     if (indexPath.section == 0) {
         return self.tableView.frame.size.width;
     }
-    return 300;
+    
+    return cellHeight + 40;
+}
+
+- (CGSize)frameForText:(NSString *)text sizeWithFont:(UIFont *)font constrainedToSize:(CGSize)size
+{
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          font, NSFontAttributeName,
+                                          nil];
+    CGRect frame = [text boundingRectWithSize:size
+                                      options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading)
+                                   attributes:attributesDictionary
+                                      context:nil];
+    
+    // This contains both height and width, but we really care about height.
+    return frame.size;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-    [cell setSeparatorInset:UIEdgeInsetsZero];
+//    [cell setSeparatorInset:UIEdgeInsetsZero];
     if (indexPath.section == 0) {
         [cell.imageView sd_setImageWithURL:[NSURL URLWithString:_post.imageUrl]
         placeholderImage:[UIImage imageNamed:@"selectPhoto.png"]];
         return cell;
     } else if (indexPath.section == 1) {
+//        DetailPostInfoCell *cell = (DetailPostInfoCell *)[tableView dequeueReusableCellWithIdentifier:@"PostInfo" forIndexPath:indexPath];
         DetailPostInfoCell *cell = [DetailPostInfoCell createView];
         [cell.lblViewNum setText:[NSString stringWithFormat:@"%ld", _post.likeNum]];
         [cell.lblCommentNum setText:[NSString stringWithFormat:@"%ld", _post.likeNum]];
         [cell.lblStarNum setText:[NSString stringWithFormat:@"%ld", _post.likeNum]];
         [cell.lblTime setText:[Lib stringFromDate:_post.deliverTime formatter:DATE_TIME_FORMAT]];
-        [self.view layoutIfNeeded];
-        // do your own text change here.
-//        self.txtfComment.text = [NSString stringWithFormat:@"%@, %@", self.infoTextView.text, self.infoTextView.text];
-//        [self.txtfComment setNeedsUpdateConstraints];
-//        [self.txtfComment updateConstraintsIfNeeded];
-//        [UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-//            [self.view layoutIfNeeded];
-//        } completion:nil];
-//        [cell.lblStatus setNumberOfLines:10];
-        [cell.txtvStatus sizeThatFits:cell.txtvStatus.frame.size];
-        [cell.txtvStatus sizeToFit];
+
         [cell.txtvStatus setText:_post.textContent];
+//        CGSize size = [cell.txtvStatus sizeThatFits:CGSizeMake(cell.txtvStatus.frame.size.width, 500)];
+        [cell.txtvStatus sizeToFit];
+        cellHeight = cell.txtvStatus.contentSize.height;
+        NSLog(@" size = %f", cellHeight);
+        [cell.txtvStatus setFrame:CGRectMake(cell.txtvStatus.frame.origin.x, cell.txtvStatus.frame.origin.y, cell.txtvStatus.frame.size.width, 133)];
+        [cell.txtvStatus reloadInputViews];
+//        [cell.contentView setFrame:CGRectMake(cell.txtvStatus.frame.origin.x, cell.txtvStatus.frame.origin.y, cell.txtvStatus.frame.size.width, cellHeight+40)];
+        [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
         return cell;
     } else if (indexPath.section == 2) {
         
@@ -175,18 +196,50 @@
     [_txtfComment resignFirstResponder];
 }
 
-- (void)keyboardWasShown:(NSNotification *)notification {
-    // Get the size of the keyboard.
-    keyboardY = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].origin.y;
-    keyboardHeight = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-    [self showChatView];
+//- (void)keyboardWasShown:(NSNotification *)notification {
+//    // Get the size of the keyboard.
+//    keyboardY = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].origin.y;
+//    keyboardHeight = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
+//    [self showChatView];
+//}
+//
+//- (void)keyboardWillHide:(NSNotification *)notification {
+//    // Get the size of the keyboard.
+//    //    keyboardSize = CGSizeMake(0, 0);
+//    [self hideChatView];
+//    keyboardHeight = 0;
+//}
+
+- (void)keyboardWillShow:(NSNotification*)aNotification {
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(self.tableView.contentInset.top, 0.0, kbSize.height, 0.0);
+    self.tableView.contentInset = contentInsets;
+    self.tableView.scrollIndicatorInsets = contentInsets;
 }
 
-- (void)keyboardWillHide:(NSNotification *)notification {
-    // Get the size of the keyboard.
-    //    keyboardSize = CGSizeMake(0, 0);
-    [self hideChatView];
-    keyboardHeight = 0;
+- (void)keyboardWillHide:(NSNotification*)aNotification {
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.35];
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(self.tableView.contentInset.top, 0.0, 0.0, 0.0);
+    self.tableView.contentInset = contentInsets;
+    self.tableView.scrollIndicatorInsets = contentInsets;
+    [UIView commitAnimations];
 }
+
+//- (CGFloat)textViewHeightForRowAtIndexPath: (NSIndexPath*)indexPath {
+//    UITextView *calculationView = [textViews objectForKey: indexPath];
+//    CGFloat textViewWidth = calculationView.frame.size.width;
+//    if (!calculationView.attributedText) {
+//        // This will be needed on load, when the text view is not inited yet
+//        
+//        calculationView = [[UITextView alloc] init];
+//        calculationView.attributedText = // get the text from your datasource add attributes and insert here
+//        textViewWidth = 290.0; // Insert the width of your UITextViews or include calculations to set it accordingly
+//    }
+//    CGSize size = [calculationView sizeThatFits:CGSizeMake(textViewWidth, FLT_MAX)];
+//    return size.height;
+//}
 
 @end

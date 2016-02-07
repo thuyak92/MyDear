@@ -11,6 +11,7 @@
 #import "LibLocation.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "DetailVC.h"
+#import "AppDelegate.h"
 
 @interface HomeVC ()
 
@@ -20,36 +21,45 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [LibRestKit share].delegate = self;
+    
     // Do any additional setup after loading the view.
     [_cvPost registerNib:[UINib nibWithNibName:@"PostCell" bundle:nil] forCellWithReuseIdentifier:@"postCell"];
     listCategories = [NSArray arrayWithObjects:@"NEW", @"人気", @"お気に入り", @"ファッション", @"グルメ", @"観光", @"スポーツ", @"芸術", @"美容", @"記念", @"趣味", nil];
     [self setCategories];
-    [self setLocation];
-    listPosts = [[NSMutableArray alloc] init];
+    
+    _listPosts = [[NSMutableArray alloc] init];
     
     [Lib sha256:@"mYdEaRaPi-DeV2016"];
-    
-    [[LibRestKit share] getObjectsAtPath:URL_POST forClass:CLASS_POST];
+}
+
+- (void) viewWillAppear:(BOOL)animated {
+    search = [Lib loadDataWithKey:KEY_SEARCH];
+    if (search == nil) {
+        search = [Lib setSearchDefault];
+    }
+    [self setLocation];
 }
 
 - (void)setLocation
 {
-    location = [[LibLocation shareLocation] locationName];
-    [_lblLocation setText:location];
-    [_lblDistance setText:[NSString stringWithFormat:@"%ldkm", [Lib getDistance]]];
-    if (!location) {
-        [self performSelector:@selector(setLocation) withObject:nil afterDelay:2];
+    search.name = [[LibLocation shareLocation] locationName];
+    [_lblLocation setText:search.name];
+    [_lblDistance setText:[NSString stringWithFormat:@"%.0fkm", search.distance]];
+    if (search.name.length == 0) {
+        [self performSelector:@selector(setLocation) withObject:nil afterDelay:1];
+    } else {
+        [Lib saveData:search forKey:KEY_SEARCH];
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    if (_reloadData) {
-        _reloadData = NO;
+    AppDelegate *app = [UIApplication sharedApplication].delegate;
+    if ([app checkLogin] && _listPosts.count == 0) {
+        [LibRestKit share].delegate = self;
+        [MBProgressHUD showHUDAddedTo:self.view animated:NO];
         [[LibRestKit share] getObjectsAtPath:URL_POST forClass:CLASS_POST];
     }
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -72,13 +82,13 @@
 #pragma mark - collectionView
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return listPosts.count;
+    return _listPosts.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     PostCell *cell = (PostCell*)[_cvPost dequeueReusableCellWithReuseIdentifier:@"postCell" forIndexPath:indexPath];
-    PostModel *post = listPosts[indexPath.row];
+    PostModel *post = _listPosts[indexPath.row];
     [cell.imvPost sd_setImageWithURL:[NSURL URLWithString:post.imageUrl]
                       placeholderImage:[UIImage imageNamed:@"selectPhoto.png"]];
     [cell.imvAvatar.layer setMasksToBounds:YES];
@@ -99,11 +109,13 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self performSegueWithIdentifier:SEGUE_HOME_TO_DETAIL sender:listPosts[indexPath.row]];
+    [self performSegueWithIdentifier:SEGUE_HOME_TO_DETAIL sender:_listPosts[indexPath.row]];
 }
 
 - (IBAction)onButtonClicked:(id)sender{
     if (sender == _btnSearchDetail) {
+        search.parentTab = TAB_HOME;
+        [Lib saveData:search forKey:KEY_SEARCH];
         [self performSegueWithIdentifier:SEGUE_HOME_TO_SEARCH sender:nil];
     } else if (sender == _btnSpot) {
 //        [self postData];
@@ -184,8 +196,9 @@
 #pragma mark - RestKit Delegate
 - (void)onGetObjectsSuccess:(LibRestKit *)controller data:(NSArray *)objects
 {
-    listPosts = [NSMutableArray arrayWithArray:objects];
+    _listPosts = [NSMutableArray arrayWithArray:objects];
     [_cvPost reloadData];
+    [MBProgressHUD hideAllHUDsForView:self.view animated:NO];
 }
 
 @end

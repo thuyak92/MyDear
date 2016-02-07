@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 
 #import <RestKit/RestKit.h>
+#import "MBProgressHUD.h"
 #import "Constants.h"
 
 #import "UserModel.h"
@@ -21,16 +22,16 @@
 #import "CategoryModel.h"
 #import "MessageModel.h"
 #import "ActionModel.h"
+#import "SearchModel.h"
 
 @interface Lib : NSObject
 
 #pragma mark - NSUserDefault
 + (id)loadDataWithKey:(NSString *)key;
 + (void)saveData:(id)data forKey:(NSString *)key;
++ (SearchModel *)setSearchDefault;
 + (UserModel *)currentUser;
 + (void)setCurrentUser:(UserModel *)user;
-+ (void)setDistance:(NSInteger)distance;
-+ (NSInteger)getDistance;
 
 #pragma mark - Color
 + (UIColor *)colorFromHexString:(NSString *)hexString;
@@ -58,5 +59,9 @@
 + (NSDictionary *)configModels;
 + (NSDictionary *)dictForClass: (NSString *)className request: (BOOL)request;
 
+#pragma mark - Login
++ (BOOL)isGuest;
++ (void)setGuest: (BOOL)guest;
++ (void)logout;
 
 @end

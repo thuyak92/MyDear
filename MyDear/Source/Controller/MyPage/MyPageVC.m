@@ -8,6 +8,7 @@
 
 #import "MyPageVC.h"
 #import "Lib.h"
+#import "AppDelegate.h"
 
 @interface MyPageVC ()
 
@@ -28,7 +29,8 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self checkLogin];
+    AppDelegate *app = [UIApplication sharedApplication].delegate;
+    [app checkLogin];
 }
 
 /*
@@ -53,17 +55,11 @@
 //    [operation start];
 }
 
-- (void)checkLogin
-{
-    if ([Lib currentUser] == nil) {
-        [self performSegueWithIdentifier:SEGUE_INFO_TO_LOGIN sender:nil];
-    }
-}
-
 - (IBAction)onButtonClicked:(id)sender {
     if (sender == _btnLogout) {
         [Lib setCurrentUser:nil];
-        [self checkLogin];
+        AppDelegate *app = [UIApplication sharedApplication].delegate;
+        [app checkLogin];
     }
 }
 @end

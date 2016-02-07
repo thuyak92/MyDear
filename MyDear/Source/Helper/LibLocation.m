@@ -7,6 +7,7 @@
 //
 
 #import "LibLocation.h"
+#import "AppDelegate.h"
 
 @interface LibLocation ()
 
@@ -108,9 +109,8 @@ static LibLocation *shareLocation = nil;
         }
     }
     else{
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"The location services seems to be disabled from the settings." preferredStyle: UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
-        [self presentViewController:alert animated:YES completion:nil];
+        AppDelegate *app = [[UIApplication sharedApplication] delegate];
+        [app showAlertTitle:@"エラー" message:@"The location services seems to be disabled from the settings."];
     }
 }
 

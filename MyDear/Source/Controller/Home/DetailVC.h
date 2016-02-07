@@ -8,15 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "LibRestKit.h"
+#import "InteractiveView.h"
 
 @interface DetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 {
     NSMutableArray *listComments;
     NSString *comment;
-    float keyboardY, keyboardHeight;
+    float keyboardY, keyboardHeight, cellHeight;
 }
 
 @property (strong, nonatomic) PostModel *post;
+@property (strong, nonatomic) InteractiveView *interactiveView;
 
 @property (weak, nonatomic) IBOutlet UIButton *btnBack;
 @property (weak, nonatomic) IBOutlet UIImageView *imvAvar;
@@ -24,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblName;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIImageView *imvPost;
 
 @property (weak, nonatomic) IBOutlet UIView *viewComment;
 @property (weak, nonatomic) IBOutlet UITextField *txtfComment;

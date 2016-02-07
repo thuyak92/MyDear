@@ -12,10 +12,11 @@
 
 @interface MapVC : UIViewController <GMSMapViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, RestKitLibDelegate>
 {
-    NSMutableArray *listPosts;
     NSArray *listCategories;
-    NSString *location;
+    SearchModel *search;
 }
+
+@property (nonatomic, strong) NSMutableArray *listPosts;
 
 @property (weak, nonatomic) IBOutlet UISearchBar *searchPost;
 @property (weak, nonatomic) IBOutlet UIButton *btnSearchDetail;

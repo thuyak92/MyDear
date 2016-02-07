@@ -254,6 +254,7 @@
 
 - (void)postData
 {
+    [MBProgressHUD showHUDAddedTo:self.view animated:NO];
     [[LibRestKit share] postObject:[self getPostData] toPath:URL_POST method:RKRequestMethodPOST withData:_imageData fileName:@"image_file" forClass:CLASS_POST];
 }
 
@@ -261,6 +262,7 @@
 {
     AppDelegate *app = [UIApplication sharedApplication].delegate;
     [app switchToTabWithIndex:TAB_HOME];
+    [MBProgressHUD hideAllHUDsForView:self.view animated:NO];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

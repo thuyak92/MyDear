@@ -22,6 +22,9 @@
 #define SEGUE_INFO_TO_LOGIN             @"SegueInfoToLogin"
 #define SEGUE_LOGIN_TO_USER_INFO        @"segueLoginToUserInfo"
 
+//Storyboard Identifier
+#define STORY_BOARD_LOGIN               @"storyboardLogin"
+
 //Tab bar
 #define TAB_HOME        0
 #define TAB_MAP         1
@@ -46,8 +49,10 @@
 //Dictionary key
 #define KEY_STATUS          @"status"
 #define KEY_DATA            @"data"
+#define KEY_SEARCH          @"search"
 #define KEY_CURRENT_USER    @"currentUser"
 #define KEY_DISTANCE        @"distance"
+#define KEY_LOGIN_AS_GUEST  @"loginAsGuest"
 
 //Response status
 #define KEY_RESPONSE_STATUS_OK  1

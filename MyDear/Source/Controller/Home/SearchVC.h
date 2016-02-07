@@ -12,12 +12,19 @@
 #define TYPE_CURRENT_LOCATION   0
 #define TYPE_OTHER_LOCATION     1
 
+#define TYPE_PRIVACY_ALL        0
+#define TYPE_PRIVACY_FRIEND     1
+#define TYPE_PRIVACY_PUBLIC     2
+
+#define TYPE_ORDER_TIME         @"order_time"
+#define TYPE_ORDER_LIKE         @"order_liked"
+
+#define TYPE_ORDER_VALUE_DESC   @"desc"
+#define TYPE_ORDER_VALUE_ASC    @"asc"
+
 @interface SearchVC : UITableViewController<UITextFieldDelegate, RestKitLibDelegate>
 {
-    NSInteger userType, spot;
-    NSMutableArray *categories;
-    NSString *locationName, *orderKey, *orderValue;
-    float longitude, latitude;
+    SearchModel *search;
     UILabel *lblSlider;
 }
 

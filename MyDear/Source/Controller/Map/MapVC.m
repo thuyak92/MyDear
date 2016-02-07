@@ -27,7 +27,8 @@
     listCategories = [NSArray arrayWithObjects:@"NEW", @"人気", @"お気に入り", @"ファッション", @"グルメ", @"観光", @"スポーツ", @"芸術", @"美容", @"記念", @"趣味", nil];
     [self setCategories];
     [self setLocation];
-    listPosts = [[NSMutableArray alloc] init];
+    _listPosts = [[NSMutableArray alloc] init];
+    [MBProgressHUD showHUDAddedTo:self.view animated:NO];
     [[LibRestKit share] getObjectsAtPath:URL_POST forClass:CLASS_POST];
 }
 
@@ -36,13 +37,23 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+    search = [Lib loadDataWithKey:KEY_SEARCH];
+    if (search == nil) {
+        search = [Lib setSearchDefault];
+    }
+    [self setLocation];
+}
+
 - (void)setLocation
 {
-    location = [[LibLocation shareLocation] locationName];
-    [_lblLocation setText:location];
-    [_lblDistance setText:[NSString stringWithFormat:@"%ldkm", [Lib getDistance]]];
-    if (!location) {
-        [self performSelector:@selector(setLocation) withObject:nil afterDelay:5];
+    search.name = [[LibLocation shareLocation] locationName];
+    [_lblLocation setText:search.name];
+    [_lblDistance setText:[NSString stringWithFormat:@"%.0fkm", search.distance]];
+    if (search.name.length == 0) {
+        [self performSelector:@selector(setLocation) withObject:nil afterDelay:1];
+    } else {
+        [Lib saveData:search forKey:KEY_SEARCH];
     }
 }
 
@@ -60,6 +71,8 @@
 
 - (IBAction)onButtonClicked:(id)sender {
     if (sender == _btnSearchDetail) {
+        search.parentTab = TAB_HOME;
+        [Lib saveData:search forKey:KEY_SEARCH];
         [self performSegueWithIdentifier:SEGUE_MAP_TO_SEARCH sender:nil];
     }
 }
@@ -127,7 +140,7 @@
 
 - (void)configGmap
 {
-    for (PostModel *post in listPosts) {
+    for (PostModel *post in _listPosts) {
 #warning T config for post
         CLLocationCoordinate2D position = CLLocationCoordinate2DMake(post.latitude, post.longitude);
         GMSMarker *place = [GMSMarker markerWithPosition:position];
@@ -143,19 +156,19 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         _mapView.myLocationEnabled = YES;
     });
-    [self zoomMap:_mapView toPosts:listPosts];
+    [self zoomMap:_mapView toPosts:_listPosts];
 }
 
 #pragma mark - Collection View
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return listPosts.count;
+    return _listPosts.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     PostMapCell *cell = (PostMapCell*)[_cvPost dequeueReusableCellWithReuseIdentifier:@"cell" forIndexPath:indexPath];
-    PostModel *post = listPosts[indexPath.row];
+    PostModel *post = _listPosts[indexPath.row];
     [cell.imvAvatar.layer setMasksToBounds:YES];
     [cell.imvAvatar.layer setCornerRadius:15];
     [cell.imvPost sd_setImageWithURL:[NSURL URLWithString:post.imageUrl]
@@ -169,7 +182,7 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self performSegueWithIdentifier:SEGUE_MAP_TO_DETAIL sender:listPosts[indexPath.row]];
+    [self performSegueWithIdentifier:SEGUE_MAP_TO_DETAIL sender:_listPosts[indexPath.row]];
 }
 
 - (IBAction)onSegmentChangeValue:(id)sender {
@@ -191,9 +204,10 @@
 #pragma mark - RestKit Delegate
 - (void)onGetObjectsSuccess:(LibRestKit *)controller data:(NSArray *)objects
 {
-    listPosts = [[NSMutableArray alloc] initWithArray:objects];
+    _listPosts = [[NSMutableArray alloc] initWithArray:objects];
     [_cvPost reloadData];
     [self configGmap];
+    [MBProgressHUD hideAllHUDsForView:self.view animated:NO];
 }
 
 @end

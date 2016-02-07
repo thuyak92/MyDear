@@ -13,6 +13,8 @@
 @property (strong, nonatomic) UIWindow *window;
 
 - (void)switchToTabWithIndex:(NSInteger)index;
+- (BOOL)checkLogin;
+- (void)showAlertTitle: (NSString *)title message: (NSString *)message;
 
 @end
 

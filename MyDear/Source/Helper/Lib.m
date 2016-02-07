@@ -8,6 +8,7 @@
 
 #import "Lib.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "AppDelegate.h"
 
 @implementation Lib
 
@@ -27,6 +28,17 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
++ (SearchModel *)setSearchDefault
+{
+    SearchModel *search = [[SearchModel alloc] init];
+    search.name = @"";
+    search.distance = 10;
+    search.category = [[NSMutableArray alloc] initWithCapacity:12];
+    search.orderKey = @"order_time";
+    search.orderValue = @"desc";
+    return search;
+}
+
 + (UserModel *)currentUser
 {
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:CLASS_USER];
@@ -39,16 +51,6 @@
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:user];
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:CLASS_USER];
     [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-+ (void)setDistance:(NSInteger)distance
-{
-    [[NSUserDefaults standardUserDefaults] setInteger:distance forKey:KEY_DISTANCE];
-}
-
-+ (NSInteger)getDistance
-{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:KEY_DISTANCE];
 }
 
 #pragma mark - Color
@@ -190,9 +192,8 @@
     } else {
         err = error;
     }
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"エラー" message:err preferredStyle: UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil]];
-    [ctrl presentViewController:alert animated:YES completion:nil];
+    AppDelegate *app = [[UIApplication sharedApplication] delegate];
+    [app showAlertTitle:@"エラー" message:err];
 }
 
 + (NSString *)sha256:(NSString *)input
@@ -329,6 +330,22 @@
         return dict;
     }
     return nil;
+}
+
++ (BOOL)isGuest
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:KEY_LOGIN_AS_GUEST];
+}
+
++ (void)setGuest:(BOOL)guest
+{
+    [[NSUserDefaults standardUserDefaults] setBool:guest forKey:KEY_LOGIN_AS_GUEST];
+}
+
++ (void)logout
+{
+    [Lib setCurrentUser:nil];
+    [Lib setGuest:FALSE];
 }
 
 @end
