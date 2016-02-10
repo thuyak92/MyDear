@@ -109,7 +109,10 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self performSegueWithIdentifier:SEGUE_HOME_TO_DETAIL sender:_listPosts[indexPath.row]];
+    DetailVC *chat = [[UIStoryboard storyboardWithName:@"Detail" bundle:nil] instantiateViewControllerWithIdentifier:@"Detail"];
+    chat.post = _listPosts[indexPath.row];
+    [self presentViewController:chat animated:YES completion:nil];
+//    [self performSegueWithIdentifier:SEGUE_HOME_TO_DETAIL sender:_listPosts[indexPath.row]];
 }
 
 - (IBAction)onButtonClicked:(id)sender{

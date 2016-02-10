@@ -15,6 +15,7 @@
     NSMutableArray *listComments;
     NSString *comment;
     float keyboardY, keyboardHeight, cellHeight;
+    UserModel *user;
 }
 
 @property (strong, nonatomic) PostModel *post;
@@ -26,7 +27,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblName;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIImageView *imvPost;
 
 @property (weak, nonatomic) IBOutlet UIView *viewComment;
 @property (weak, nonatomic) IBOutlet UITextField *txtfComment;

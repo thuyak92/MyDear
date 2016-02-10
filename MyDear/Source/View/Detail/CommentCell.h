@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imvAva;
 @property (weak, nonatomic) IBOutlet UILabel *lblName;
 @property (weak, nonatomic) IBOutlet UILabel *lblTime;
-@property (weak, nonatomic) IBOutlet UILabel *lblComment;
+@property (weak, nonatomic) IBOutlet UITextView *txtvComment;
+
 
 @end

@@ -9,9 +9,9 @@
 #import "DetailVC.h"
 #import "Lib.h"
 #import <SDWebImage/UIImageView+WebCache.h>
-#import "DetailPostInfoCell.h"
-#import "DetailCommentCell.h"
 #import "PostInfoCell.h"
+#import "PostImageCell.h"
+#import "CommentCell.h"
 
 
 @interface DetailVC ()
@@ -22,13 +22,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSLog(@"sdahgiew");
+    user = [Lib currentUser];
     // Do any additional setup after loading the view.
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
-    self.tableView.estimatedRowHeight = self.tableView.rowHeight;
+//    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
     self.tableView.rowHeight = UITableViewAutomaticDimension;
-    self.tableView.rowHeight = UITableViewAutomaticDimension;
-    self.tableView.estimatedRowHeight = 50;
-    cellHeight = 44;
+    self.tableView.estimatedRowHeight = 150;
+//    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
+//    cellHeight = 44;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
@@ -59,19 +61,19 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section == 2) {
-        return listComments.count;
+        return 3;// listComments.count;
     }
     return 1;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.section == 0) {
-        return self.tableView.frame.size.width;
-    }
-    
-    return cellHeight + 40;
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    if (indexPath.section == 0) {
+//        return self.tableView.frame.size.width;
+//    }
+//    
+//    return cellHeight + 40;
+//}
 
 - (CGSize)frameForText:(NSString *)text sizeWithFont:(UIFont *)font constrainedToSize:(CGSize)size
 {
@@ -89,34 +91,46 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
 //    [cell setSeparatorInset:UIEdgeInsetsZero];
     if (indexPath.section == 0) {
+        PostImageCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PostImageCell"];
         [cell.imageView sd_setImageWithURL:[NSURL URLWithString:_post.imageUrl]
         placeholderImage:[UIImage imageNamed:@"selectPhoto.png"]];
         return cell;
     } else if (indexPath.section == 1) {
+        PostInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PostInfoCell"];
+        
+        
+        
+        
 //        DetailPostInfoCell *cell = (DetailPostInfoCell *)[tableView dequeueReusableCellWithIdentifier:@"PostInfo" forIndexPath:indexPath];
-        DetailPostInfoCell *cell = [DetailPostInfoCell createView];
+//        DetailPostInfoCell *cell = [DetailPostInfoCell createView];
         [cell.lblViewNum setText:[NSString stringWithFormat:@"%ld", _post.likeNum]];
-        [cell.lblCommentNum setText:[NSString stringWithFormat:@"%ld", _post.likeNum]];
-        [cell.lblStarNum setText:[NSString stringWithFormat:@"%ld", _post.likeNum]];
+        [cell.lblCommentNum setText:[NSString stringWithFormat:@"12345%ld", _post.likeNum]];
+        [cell.lblStarNum setText:[NSString stringWithFormat:@"4%ld", _post.likeNum]];
         [cell.lblTime setText:[Lib stringFromDate:_post.deliverTime formatter:DATE_TIME_FORMAT]];
-
+//
         [cell.txtvStatus setText:_post.textContent];
-//        CGSize size = [cell.txtvStatus sizeThatFits:CGSizeMake(cell.txtvStatus.frame.size.width, 500)];
-        [cell.txtvStatus sizeToFit];
-        cellHeight = cell.txtvStatus.contentSize.height;
-        NSLog(@" size = %f", cellHeight);
-        [cell.txtvStatus setFrame:CGRectMake(cell.txtvStatus.frame.origin.x, cell.txtvStatus.frame.origin.y, cell.txtvStatus.frame.size.width, 133)];
-        [cell.txtvStatus reloadInputViews];
-//        [cell.contentView setFrame:CGRectMake(cell.txtvStatus.frame.origin.x, cell.txtvStatus.frame.origin.y, cell.txtvStatus.frame.size.width, cellHeight+40)];
-        [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+        
+////        CGSize size = [cell.txtvStatus sizeThatFits:CGSizeMake(cell.txtvStatus.frame.size.width, 500)];
+//        [cell.txtvStatus sizeToFit];
+//        cellHeight = cell.txtvStatus.contentSize.height;
+//        NSLog(@" size = %f", cellHeight);
+//        [cell.txtvStatus setFrame:CGRectMake(cell.txtvStatus.frame.origin.x, cell.txtvStatus.frame.origin.y, cell.txtvStatus.frame.size.width, 133)];
+//        [cell.txtvStatus reloadInputViews];
+////        [cell.contentView setFrame:CGRectMake(cell.txtvStatus.frame.origin.x, cell.txtvStatus.frame.origin.y, cell.txtvStatus.frame.size.width, cellHeight+40)];
+//        [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
         return cell;
     } else if (indexPath.section == 2) {
-        
+        CommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
+//        [cell.imvAva sd_setImageWithURL:[NSURL URLWithString:user.avatarUrl]
+//    placeholderImage:[UIImage imageNamed:@"iconAvaDefault.png"]];
+//        cell.lblName.text = user.nickname;
+        cell.lblTime.text = [Lib stringFromDate:_post.deliverTime formatter:DATE_TIME_FORMAT];
+        cell.txtvComment.text = _post.textContent;
+        return cell;
     }
-    return cell;
+    return [tableView dequeueReusableCellWithIdentifier:@"cell"];
 }
 
 - (IBAction)onButtonClicked:(id)sender {
