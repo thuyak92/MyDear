@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "LibRestKit.h"
-#import "InteractiveView.h"
 
 @interface DetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 {
@@ -19,7 +18,6 @@
 }
 
 @property (strong, nonatomic) PostModel *post;
-@property (strong, nonatomic) InteractiveView *interactiveView;
 
 @property (weak, nonatomic) IBOutlet UIButton *btnBack;
 @property (weak, nonatomic) IBOutlet UIImageView *imvAvar;

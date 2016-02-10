@@ -8,8 +8,6 @@
 
 #import "MessageVC.h"
 #import <SDWebImage/UIImageView+WebCache.h>
-#import "JChatViewController.h"
-#import "JMessages.h"
 
 @interface MessageVC ()
 
@@ -20,13 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    messages = [[NSMutableArray alloc] init];
-    JChatViewController *chat = [[UIStoryboard storyboardWithName:@"JChat" bundle:nil] instantiateViewControllerWithIdentifier:@"JChat"];
-    chat.messagesArray = messages;
-    [Lib getImageFromUrl:selectedUser.avatarUrl callback:^(NSData *data) {
-        chat.guestAvatar = [UIImage imageWithData:data];
-        [self presentViewController:chat animated:YES completion:nil];
-    }];;
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -81,13 +73,13 @@
 #pragma mark - RestKit
 - (void)onGetObjectsSuccess:(LibRestKit *)controller data:(NSArray *)objects
 {
-    messages = [NSMutableArray arrayWithArray:objects];
-    JChatViewController *chat = [[UIStoryboard storyboardWithName:@"JChat" bundle:nil] instantiateViewControllerWithIdentifier:@"JChat"];
-    chat.messagesArray = messages;
-    [Lib getImageFromUrl:selectedUser.avatarUrl callback:^(NSData *data) {
-        chat.guestAvatar = [UIImage imageWithData:data];
-        [self presentViewController:chat animated:YES completion:nil];
-    }];;
+//    messages = [NSMutableArray arrayWithArray:objects];
+//    JChatViewController *chat = [[UIStoryboard storyboardWithName:@"JChat" bundle:nil] instantiateViewControllerWithIdentifier:@"JChat"];
+//    chat.messagesArray = messages;
+//    [Lib getImageFromUrl:selectedUser.avatarUrl callback:^(NSData *data) {
+//        chat.guestAvatar = [UIImage imageWithData:data];
+//        [self presentViewController:chat animated:YES completion:nil];
+//    }];;
 }
 
 @end
