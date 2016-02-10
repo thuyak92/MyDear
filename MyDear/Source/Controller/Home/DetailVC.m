@@ -24,8 +24,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cell"];
-//    self.tableView.estimatedRowHeight = self.tableView.rowHeight;
-//    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    self.tableView.estimatedRowHeight = self.tableView.rowHeight;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.estimatedRowHeight = 50;
     cellHeight = 44;
