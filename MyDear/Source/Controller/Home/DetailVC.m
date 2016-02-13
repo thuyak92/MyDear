@@ -37,6 +37,16 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    defaultTbFr = self.tableView.frame;
+    defaultCmtFr = self.viewComment.frame;
+    [_txtvComment.layer setMasksToBounds:YES];
+    [_txtvComment.layer setCornerRadius:5];
+    [_txtvComment.layer setBorderWidth:1];
+//    [_txtvComment.layer setBorderColor:[CGColorRef colorFromHexString:@"#000000"]];
+}
+
 /*
 #pragma mark - Navigation
 
@@ -93,30 +103,16 @@
     if (sender == _btnBack) {
         [self dismissViewControllerAnimated:YES completion:nil];
     } else if (sender == _btnSend) {
-        
+        comment = _txtvComment.text;
+        NSLog(@"comment = %@", comment);
+        _txtvComment.text = @"";
+        [_txtvComment endEditing:YES];
     }
 }
 
 #pragma mark - Comment
 
-- (void)showChatView
-{
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.5];
-    [_tableView setFrame:CGRectMake(0, _tableView.frame.origin.y, _tableView.frame.size.width, _tableView.frame.size.height-keyboardHeight)];
-    [_viewComment setFrame:CGRectMake(0, _viewComment.frame.origin.y-keyboardHeight, _viewComment.frame.size.width, _viewComment.frame.size.height)];
-    [UIView commitAnimations];
-}
 
-- (void)hideChatView
-{
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.5];
-    [_tableView setFrame:CGRectMake(0, _tableView.frame.origin.y, _tableView.frame.size.width, _tableView.frame.size.height+keyboardHeight)];
-    [_viewComment setFrame:CGRectMake(0, _viewComment.frame.origin.y+keyboardHeight, _viewComment.frame.size.width, _viewComment.frame.size.height)];
-    [UIView commitAnimations];
-    [_txtfComment endEditing:YES];
-}
 
 - (void)sendChatMessage
 {
@@ -144,57 +140,59 @@
 //}
 
 #pragma mark - TextField delegate
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+
+- (BOOL)textViewShouldEndEditing:(UITextView *)textView
 {
-    return YES;
+    return [textView resignFirstResponder];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [self sendChatMessage];
-    [_txtfComment endEditing:YES];
-    return YES;
+- (void)textViewDidChange:(UITextView *)textView {
+    if (textView.text.length == 0) {
+        [_lblCmtPlaceholder setHidden:NO];
+    } else {
+        [_lblCmtPlaceholder setHidden:YES];
+    }
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    [_txtfComment becomeFirstResponder];
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-    [_txtfComment resignFirstResponder];
-}
-
-//- (void)keyboardWasShown:(NSNotification *)notification {
-//    // Get the size of the keyboard.
-//    keyboardY = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].origin.y;
-//    keyboardHeight = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-//    [self showChatView];
-//}
-//
-//- (void)keyboardWillHide:(NSNotification *)notification {
-//    // Get the size of the keyboard.
-//    //    keyboardSize = CGSizeMake(0, 0);
-//    [self hideChatView];
-//    keyboardHeight = 0;
-//}
+#pragma mark - Keyboard
 
 - (void)keyboardWillShow:(NSNotification*)aNotification {
     NSDictionary* info = [aNotification userInfo];
     CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(self.tableView.contentInset.top, 0.0, kbSize.height, 0.0);
-    self.tableView.contentInset = contentInsets;
-    self.tableView.scrollIndicatorInsets = contentInsets;
+    keyboardHeight = kbSize.height;
+    [self showChatView];
 }
 
 - (void)keyboardWillHide:(NSNotification*)aNotification {
+    [self hideChatView];
+    [_txtvComment endEditing:YES];
+}
+
+- (void)showChatView
+{
     [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.35];
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(self.tableView.contentInset.top, 0.0, 0.0, 0.0);
-    self.tableView.contentInset = contentInsets;
-    self.tableView.scrollIndicatorInsets = contentInsets;
+    [UIView setAnimationDuration:0.5];
+    
+    CGRect tbFrame = defaultTbFr;
+    tbFrame.size.height -= keyboardHeight;
+    [self.tableView setFrame:tbFrame];
+//    [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:/*listComments.count*/3 inSection:2] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    
+    [self.tableView.layer setBorderWidth:2];
+    
+    CGRect frame = defaultCmtFr;
+    frame.origin.y -= keyboardHeight;
+    [self.viewComment setFrame:frame];
+    
+    [UIView commitAnimations];
+}
+
+- (void)hideChatView
+{
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.5];
+    [self.tableView setFrame:defaultTbFr];
+    [self.viewComment setFrame:defaultCmtFr];
     [UIView commitAnimations];
 }
 

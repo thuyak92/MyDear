@@ -9,12 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "LibRestKit.h"
 
-@interface DetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface DetailVC : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextViewDelegate>
 {
     NSMutableArray *listComments;
     NSString *comment;
-    float keyboardY, keyboardHeight, cellHeight;
+    float keyboardHeight;
     UserModel *user;
+    CGRect defaultTbFr, defaultCmtFr;
 }
 
 @property (strong, nonatomic) PostModel *post;
@@ -25,9 +26,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblName;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-
+@property (weak, nonatomic) IBOutlet UITextView *txtvComment;
+@property (weak, nonatomic) IBOutlet UILabel *lblCmtPlaceholder;
 @property (weak, nonatomic) IBOutlet UIView *viewComment;
-@property (weak, nonatomic) IBOutlet UITextField *txtfComment;
+
 @property (weak, nonatomic) IBOutlet UIButton *btnSend;
 
 - (IBAction)onButtonClicked:(id)sender;
