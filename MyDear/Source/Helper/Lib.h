@@ -62,6 +62,7 @@
 #pragma mark - Login
 + (BOOL)isGuest;
 + (void)setGuest: (BOOL)guest;
++ (BOOL)checkLogin;
 + (void)logout;
 
 @end

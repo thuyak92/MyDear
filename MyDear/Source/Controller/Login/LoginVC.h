@@ -17,6 +17,7 @@
 @interface LoginVC : UIViewController<UITextFieldDelegate, RestKitLibDelegate, FBSDKLoginButtonDelegate>
 {
     NSString *url;
+    BOOL isRegister;
 }
 @property (weak, nonatomic) IBOutlet UITextField *txtfUsername;
 @property (weak, nonatomic) IBOutlet UITextField *txtfPassword;

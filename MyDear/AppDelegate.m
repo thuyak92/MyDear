@@ -79,16 +79,14 @@
     //reload data with flag
 }
 
-- (BOOL)checkLogin
+- (void)showLogin
 {
-    UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
-    UIViewController *vc = [tabController selectedViewController];
-    if ([Lib isGuest] || [Lib currentUser]) {
-        return TRUE;
+    if (![Lib currentUser]) {
+        UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
+        UIViewController *vc = [tabController selectedViewController];
+        LoginVC * loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:STORY_BOARD_LOGIN];
+        [vc presentViewController:loginVC animated:YES completion:nil];
     }
-    LoginVC * loginVC = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:STORY_BOARD_LOGIN];
-    [vc presentViewController:loginVC animated:YES completion:nil];
-    return FALSE;
 }
 
 - (void)showAlertTitle: (NSString *)title message: (NSString *)message

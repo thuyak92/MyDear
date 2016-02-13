@@ -81,8 +81,10 @@
 
 - (IBAction)onLoginButtonClicked:(id)sender {
     if (sender == _btnLogin) {
+        isRegister = FALSE;
         url = URL_LOGIN;
     } else {
+        isRegister = TRUE;
         url = URL_REGISTER;
     }
     UserModel *user = [self getInfo];
@@ -94,11 +96,11 @@
 }
 
 - (IBAction)onCancelButtonClicked:(id)sender {
-//    AppDelegate *app = [UIApplication sharedApplication].delegate;
-//    [app switchToTabWithIndex:TAB_HOME];
     [MBProgressHUD hideAllHUDsForView:self.view animated:NO];
     [Lib setGuest:TRUE];
     [self dismissViewControllerAnimated:YES completion:nil];
+    AppDelegate *app = [UIApplication sharedApplication].delegate;
+    [app switchToTabWithIndex:TAB_HOME];
 }
 
 - (IBAction)onLoginTwitterButtonClicked:(id)sender {
@@ -201,16 +203,16 @@
         if (user.error == nil) {//success
             [Lib setCurrentUser:user];
             [Lib setGuest:FALSE];
-#warning T redirect to SEGUE_LOGIN_TO_USER_INFO if register success 
-            //or nickname = nil
-//            AppDelegate *app = [UIApplication sharedApplication].delegate;
-//            [app switchToTabWithIndex:TAB_HOME];
-            [self dismissViewControllerAnimated:YES completion:nil];
+            if (isRegister) {
+                [self performSegueWithIdentifier:SEGUE_LOGIN_TO_USER_INFO sender:nil];
+            } else {
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
         } else {
             [Lib handleError:user.error forController:self];
         }
     }
+    isRegister = FALSE;
 }
-
 
 @end

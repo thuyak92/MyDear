@@ -13,6 +13,9 @@
 #import "DetailVC.h"
 #import "AppDelegate.h"
 
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+
 @interface HomeVC ()
 
 @end
@@ -54,8 +57,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    AppDelegate *app = [UIApplication sharedApplication].delegate;
-    if ([app checkLogin] && _listPosts.count == 0) {
+    if ([Lib checkLogin] && _listPosts.count == 0) {
         [LibRestKit share].delegate = self;
         [MBProgressHUD showHUDAddedTo:self.view animated:NO];
         [[LibRestKit share] getObjectsAtPath:URL_POST forClass:CLASS_POST];
@@ -93,8 +95,12 @@
                       placeholderImage:[UIImage imageNamed:@"selectPhoto.png"]];
     [cell.imvAvatar.layer setMasksToBounds:YES];
     [cell.imvAvatar.layer setCornerRadius:15];
-    [cell.imvAvatar sd_setImageWithURL:[NSURL URLWithString:post.user.avatarUrl]
-                    placeholderImage:[UIImage imageNamed:@"iconAvaDefault.png"]];
+    UserModel *user = [Lib currentUser];
+    FBSDKProfilePictureView *imv = [[FBSDKProfilePictureView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+    [imv setProfileID:user.facebookId];
+    [cell.imvAvatar addSubview:imv];
+//    [cell.imvAvatar sd_setImageWithURL:[NSURL URLWithString:post.user.avatarUrl]
+//                    placeholderImage:[UIImage imageNamed:@"iconAvaDefault.png"]];
 //    [imageView sd_setImageWithURL:[NSURL URLWithString:@"https://graph.facebook.com/olivier.poitrey/picture"]
 //                 placeholderImage:[UIImage imageNamed:@"avatar-placeholder.png"]
 //                          options:SDWebImageRefreshCached];

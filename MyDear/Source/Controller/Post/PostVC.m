@@ -9,6 +9,7 @@
 #import "PostVC.h"
 #import "Lib.h"
 #import "PostSettingVC.h"
+#import "AppDelegate.h"
 
 @interface PostVC ()
 
@@ -19,6 +20,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    AppDelegate *app = [UIApplication sharedApplication].delegate;
+    [app showLogin];
 }
 
 - (void)didReceiveMemoryWarning {

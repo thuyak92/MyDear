@@ -342,6 +342,14 @@
     [[NSUserDefaults standardUserDefaults] setBool:guest forKey:KEY_LOGIN_AS_GUEST];
 }
 
++ (BOOL)checkLogin
+{
+    if ([Lib isGuest] || [Lib currentUser]) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
 + (void)logout
 {
     [Lib setCurrentUser:nil];
